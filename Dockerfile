@@ -1,66 +1,36 @@
-# # Указываем базовый образ
-# FROM node:18
+FROM node:18-alpine AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
-# # Устанавливаем рабочий каталог
-# WORKDIR /app
+COPY package.json package-lock.json ./
+RUN  npm install --production
 
-# # Копируем package.json и package-lock.json
-# COPY package*.json ./
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-# # Устанавливаем зависимости
-# RUN npm install
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# # Копируем исходный код
-# COPY . .
+RUN npm run build
 
-# # Собираем приложение Next.js
-# RUN npm run build
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-# # Указываем команду для запуска приложения
-# CMD ["npm", "start"]
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# # Открываем порт 3000
-# EXPOSE 3000
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-#  NEWW 
+USER nextjs
 
-# FROM node:18 
-# # as dependencies
-# WORKDIR /app
-# COPY package.json ./
-# RUN npm install 
+EXPOSE 8085
 
-# # FROM node:18 as builder
-# # WORKDIR /app
-# COPY . .
-# COPY --from=dependencies /app/node_modules ./node_modules
-# RUN npm run build
+ENV PORT 8085
 
-# # FROM node:18 as runner
-# # WORKDIR /app
-# ENV NODE_ENV production
-
-# COPY --from=builder /app/public ./public
-# COPY --from=builder /app/package.json ./package.json
-# COPY --from=builder /app/.next ./.next
-# COPY --from=builder /app/node_modules ./node_modules
-
-# EXPOSE 3000
-# CMD ["npm", "start"]
-
-FROM node:latest
-# Устанавливаем зависимости для сборки
-RUN apk update && apk add --no-cache bash 
-WORKDIR /app 
-# Копируем файлы проекта
-COPY package*.json ./ 
-COPY . . 
-# Устанавливаем зависимости
-RUN npm install 
-# Сборка Next.js приложения
-RUN npm run build 
-# Копируем CSV файл
-COPY data.csv ./public/data.csv 
-# Запускаем сервер Next.js
-CMD ["npm", "run", "start"] 
+CMD ["npm", "start"]
