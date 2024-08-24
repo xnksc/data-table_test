@@ -60,10 +60,7 @@ const DataTable = () => {
     fetchData();
   }, []);
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
     setPageInput(newPage + 1);
   };
@@ -140,7 +137,7 @@ const DataTable = () => {
                     .map((row, index) => (
                       <TableRow
                         key={index}
-                        className="grid min-h-[10%] grid-cols-11 hover:bg-gray-100 "
+                        className="grid h-[10%] grid-cols-11 hover:bg-gray-100"
                       >
                         <TableCell className="truncate col-span-1">
                           {page * rowsPerPage + index + 1}
@@ -193,32 +190,32 @@ const DataTable = () => {
         </FormControl>
         <div className="flex items-center space-x-4">
           <IconButton
-            onClick={(event) => handleChangePage(event, 0)}
+            onClick={() => handleChangePage(0)}
             disabled={page === 0}
             aria-label="First Page"
           >
             <FirstPage />
           </IconButton>
           <IconButton
-            onClick={(event) => handleChangePage(event, page - 1)}
+            onClick={() => handleChangePage(page - 1)}
             disabled={page === 0}
             aria-label="Previous Page"
           >
             <NavigateBefore />
           </IconButton>
-          <span className="flex items-center justify-center w-10 h-10 rounded-2xl border-2 border-blue-300 text-sm text-blue-500">
+          <span className="flex items-center justify-center w-10 h-10 rounded-xl border-2 border-blue-300 text-sm text-blue-500">
             {page + 1}
           </span>
           <IconButton
-            onClick={(event) => handleChangePage(event, page + 1)}
+            onClick={() => handleChangePage(page + 1)}
             disabled={page >= Math.ceil(data.length / rowsPerPage) - 1}
             aria-label="Next Page"
           >
             <NavigateNext />
           </IconButton>
           <IconButton
-            onClick={(event) =>
-              handleChangePage(event, Math.ceil(data.length / rowsPerPage) - 1)
+            onClick={() =>
+              handleChangePage(Math.ceil(data.length / rowsPerPage) - 1)
             }
             disabled={page >= Math.ceil(data.length / rowsPerPage) - 1}
             aria-label="Last Page"
