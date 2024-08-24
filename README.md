@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 1. Сборка и запуск.
+Скрипт для сборки и запуска контейнера (docker-compose): docker compose up -d
+после загрузки приложение доступно по адресу http://127.0.0.1:8085
 
-## Getting Started
+# 2. Описание решения:
+Для решения задания использовался фреймворк Next.js, TypeScript в качестве языка программирования, tailwind css и material ui для пользовательского интерфейса. 
+Серверная часть расположена в файле route.ts в директории app/api/data и содержит обработчик GET запроса. При запросе метод получает данные из файла article_def_v_orig.csv (расположенного в папке app/data), преобразует их в JSON формат при помощи библиотеки csvtojson. Затем выборкой берутся первые 5 столбцов и возвращаются в ответе.
+С клиентской стороны путем fetch запроса на /api/data запрашиваются данные, которые при их полной загрузке отображаются в таблицу, реализованную при помощи библиотеки mui. Во время загрузки отображается loader
 
-First, run the development server:
+# 3.Описание приложения и функционал:
+Таблица содержит строки, состоящие из ее порядкового номера, а также 5 значений из таблицы данных.
+На каждой странице содержится 10,20 или 30 строк, в зависимости от настройки отображения количества строк, расположенной в левом нижнем углу экрана.
+Также имеется навигация по страницам путем нажатия на кнопки <<,< , >,>> на первую, предыдущую, следующую и последнюю страницы соответственно. 
+Пользователь может перейти на нужную ему страницу, указав ее в поле ввода страницы в правом нижнем углу экрана. Номер текущей страницы расположен в нижней центральной части экрана.
+На данный момент интерфейс приложения адаптирован только для ПК и ноутбуков.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# 4. Масштабирование
+При необходимости масштабирования проекта имеет смысл добавить следующие нововведения:
+1. Оптимизировать загрузку данных и страниц, используя мемоизацию и lazy load.
+2. Реализовать store при помощи менеджера состояния (redux, zustand).
+3. Адаптировать интерфейс под мобильные устройства.
+4. Доработать UX, добавив к таблице фильтры и поиск.
+5. Добавить нотификацию и более качественную обработку ошибок.
+6. Провести тестирование приложения.
